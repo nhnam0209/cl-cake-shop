@@ -21,18 +21,18 @@
       <div class="inline-flex justify-between w-full">
         <div>
           <div class="mt-2 flex inline-flex">
-            <div class="border w-fit">
+            <div class="border w-fit rounded-md">
               <button
-                class="py-1 px-2 border-r"
+                class="py-1 px-2 border-r hover:bg-slate-100"
                 @click="changeValue(false, count)"
               >
                 -
               </button>
-              <span class="">
+              <span class="p-2">
                 {{ count }}
               </span>
               <button
-                class="py-1 px-2 border-l"
+                class="py-1 px-2 border-l hover:bg-slate-100"
                 @click="changeValue(true, count)"
               >
                 +
@@ -43,7 +43,7 @@
 
         <div class="">
           <button
-            class="border py-3 px-4 flex"
+            class="border py-3 px-4 flex hover:bg-slate-100 rounded-md"
             @click="addToCart(product, count)"
           >
             Add
@@ -61,9 +61,8 @@ import { Component, Prop, Vue } from "nuxt-property-decorator";
 })
 export default class extends Vue {
   count: number = 0;
-  finalPrice: number = 0;
   @Prop({ default: {} }) product: any;
-  cart = this.$vxm.product.cart;
+  carts = this.$vxm.product.cart;
 
   changeValue(value: any, count: any) {
     if (value) {
@@ -76,36 +75,49 @@ export default class extends Vue {
   }
 
   addToCart(product: any, quantity: any) {
-    product.is_on_discount
-      ? (this.finalPrice = product.discounted_price)
-      : (this.finalPrice = product.original_price);
     const item = {
       ...product,
       quantity: quantity,
-      final_price: this.finalPrice,
+      final_price: product.is_on_discount
+        ? product.discounted_price
+        : product.original_price,
     };
-    if (this.cart.length > 0) {
-      let index = this.cart.findIndex((object: any) => {
-        return object.id === product.id;
+    if (localStorage.getItem("cart")) {
+      const cartData = JSON.parse(localStorage.cart);
+      this.$vxm.product.setCart(cartData);
+      this.carts = cartData;
+    }
+
+    if (this.carts.length > 0) {
+      let index = this.carts.findIndex((object: any) => {
+        return object.id === item.id;
       });
-      if (product.id == this.cart[index].id) {
-        const newValue = quantity + this.cart[index].quantity;
-        if (
-          newValue < this.cart[index].stock_count ||
-          newValue == this.cart[index].stock_count
-        ) {
+
+      if (index == -1) {
+        this.$vxm.product.addToCart(item);
+      } else {
+        const newValue = quantity + this.carts[index].quantity;
+        if (newValue <= this.carts[index].stock_count) {
           this.$vxm.product.addToCart(item);
         } else {
           alert(
             "Your quantity overpass with our available: " +
               product.stock_count +
               ". Your cart currently is: " +
-              this.cart[index].quantity
+              this.carts[index].quantity
           );
         }
       }
     } else {
       this.$vxm.product.addToCart(item);
+    }
+  }
+
+  mounted() {
+    if (localStorage.getItem("cart")) {
+      const cartData = JSON.parse(localStorage.cart);
+      this.$vxm.product.setCart(cartData);
+      this.carts = cartData;
     }
   }
 

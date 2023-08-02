@@ -50,40 +50,71 @@ export class ProductStore extends VuexModule {
     let index = this.cart.findIndex((object: any) => {
       return object.id === product.id;
     });
-    if (
-      product.quantity < product.stock_count ||
-      product.quantity == product.stock_count
-    ) {
-      if (index == -1) {
-        this.cart.push(product);
-        this.setCart(this.cart);
-      } else {
-        if (product.id == this.cart[index].id) {
-          if (product.quantity < this.cart[index].stock_count) {
-            const oldValue = this.cart[index];
-            const newValue = product.quantity + oldValue.quantity;
+    if (product.quantity <= product.stock_count) {
+      if (localStorage.getItem("cart")) {
+        this.setCart(JSON.parse(localStorage.cart));
+        if (index != -1) {
+          const oldValue = this.cart[index];
+          const newValue = product.quantity + oldValue.quantity;
+          if (newValue <= oldValue.stock_count) {
             oldValue.quantity = newValue;
             this.product.quantity = newValue;
             this.setCart(this.cart);
+            localStorage.setItem("cart", JSON.stringify(this.cart));
           }
+        } else {
+          this.cart.push(product);
+          this.setCart(this.cart);
+          localStorage.setItem("cart", JSON.stringify(this.cart));
         }
+      } else {
+        this.cart.push(product);
+        this.setCart(this.cart);
+        localStorage.setItem("cart", JSON.stringify(this.cart));
       }
     }
+    location.reload();
+  }
+
+  @action async updateCart(product: any) {
+    this.setProduct(product);
+    let index = this.cart.findIndex((object: any) => {
+      return object.id === product.id;
+    });
+    if (product.quantity <= product.stock_count) {
+      if (index != -1) {
+        if (product.quantity <= product.quantity) {
+          this.product.quantity = product.quantity;
+          this.setCart(this.cart);
+          localStorage.setItem("cart", JSON.stringify(this.cart));
+        }
+      } else {
+        this.cart.push(product);
+        this.setCart(this.cart);
+        localStorage.setItem("cart", JSON.stringify(this.cart));
+      }
+    }
+    location.reload();
   }
 
   @action async removeAllCart(cart: any) {
     location.reload();
     this.clearCart(cart);
+    localStorage.removeItem("cart");
   }
 
   @action async removeProduct(product: any) {
     const index = this.cart.findIndex((object: any) => {
       return object.id === product.id;
     });
-    if (index !== -1) {
-      this.cart.splice(index, 1);
+    if (localStorage.getItem("cart")) {
+      if (index !== -1) {
+        this.cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(this.cart));
+      }
     }
     this.setCart(this.cart);
+    location.reload();
   }
 
   @action async checkOut() {

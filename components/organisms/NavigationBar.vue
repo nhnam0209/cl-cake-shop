@@ -31,13 +31,44 @@
           <NuxtLink
             class="navbar-items text-xl mx-5 rounded-full p-5"
             to="/cart"
-            ><cart
-          /></NuxtLink>
+            ><cart />
+            <div
+              class="p-3 w-3 h-3 flex relative bg-red-500 text-white mx-auto my-auto rounded-full"
+            >
+              <div
+                class="absolute top-2 flex justify-center self-center text-sm right-[8px] top-[1px]"
+              >
+                {{ itemsInCart }}
+              </div>
+            </div></NuxtLink
+          >
         </button>
       </div>
     </div>
   </nav>
 </template>
+<script lang="ts">
+import { Component, Vue } from "nuxt-property-decorator";
+@Component({
+  name: "NavigationBar",
+})
+export default class extends Vue {
+  carts = [];
+  itemsInCart = 0;
+
+  created() {
+    if (localStorage.getItem("cart")) {
+      const cartData = JSON.parse(localStorage.cart);
+      this.$vxm.product.setCart(cartData);
+      this.carts = cartData;
+    }
+  }
+
+  mounted() {
+    this.itemsInCart = this.carts.length;
+  }
+}
+</script>
 
 <style>
 .navbar-icon-list {

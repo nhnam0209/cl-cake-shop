@@ -1,7 +1,9 @@
 <template>
   <Default>
     <template #content>
-      <div class="h-full">hello</div>
+      <div class="h-full">
+        <cart-summary />
+      </div>
     </template>
   </Default>
 </template>

@@ -15,9 +15,19 @@ import { Component, Vue } from "nuxt-property-decorator";
   name: "ShopPage",
   head() {
     return {
-      title: "ShopPage",
+      title: "Shop",
     };
   },
 })
-export default class extends Vue {}
+export default class extends Vue {
+  carts = this.$vxm.product.cart;
+
+  async mounted() {
+    if (localStorage.getItem("cart")) {
+      const cartData = JSON.parse(localStorage.cart);
+      this.$vxm.product.setCart(cartData);
+      this.carts = cartData;
+    }
+  }
+}
 </script>
