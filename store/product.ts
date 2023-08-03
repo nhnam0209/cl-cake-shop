@@ -21,15 +21,10 @@ export class ProductStore extends VuexModule {
       discounted_price: 0,
       final_price: 0,
       stock_count: 0,
+      note: EMPTY,
+      is_open_note: false,
     } || null;
   cart: any = [] || null;
-  userInfo: any = {
-    fname: EMPTY,
-    phone_number: EMPTY,
-    address: EMPTY,
-    email: EMPTY,
-    note: EMPTY,
-  };
   order: any = [] || null;
 
   @mutation setProduct(product: any) {
@@ -50,6 +45,7 @@ export class ProductStore extends VuexModule {
     let index = this.cart.findIndex((object: any) => {
       return object.id === product.id;
     });
+
     if (product.quantity <= product.stock_count) {
       if (localStorage.getItem("cart")) {
         this.setCart(JSON.parse(localStorage.cart));
@@ -63,12 +59,15 @@ export class ProductStore extends VuexModule {
             localStorage.setItem("cart", JSON.stringify(this.cart));
           }
         } else {
-          this.cart.push(product);
+          this.setProduct(product);
+          console.log(this.product);
+          this.cart.push(this.product);
           this.setCart(this.cart);
           localStorage.setItem("cart", JSON.stringify(this.cart));
         }
       } else {
-        this.cart.push(product);
+        this.setProduct(product);
+        this.cart.push(this.product);
         this.setCart(this.cart);
         localStorage.setItem("cart", JSON.stringify(this.cart));
       }
@@ -76,7 +75,7 @@ export class ProductStore extends VuexModule {
     location.reload();
   }
 
-  @action async updateCart(product: any) {
+  @action async updateQuantity(product: any) {
     this.setProduct(product);
     let index = this.cart.findIndex((object: any) => {
       return object.id === product.id;
@@ -97,10 +96,33 @@ export class ProductStore extends VuexModule {
     location.reload();
   }
 
+  @action async updateNote(product: any) {
+    this.setProduct(product);
+    let index = this.cart.findIndex((object: any) => {
+      return object.id === product.id;
+    });
+    if (index != -1) {
+      this.product.note = product.note;
+      this.product.is_open_note = false;
+      this.cart[index] = this.product;
+      this.setCart(this.cart);
+      localStorage.setItem("cart", JSON.stringify(this.cart));
+      alert("Your note was noted");
+    } else {
+      this.product.is_open_note = false;
+      this.cart.push(product);
+      this.setCart(this.cart);
+      localStorage.setItem("cart", JSON.stringify(this.cart));
+      alert("Your note was noted");
+    }
+    location.reload();
+  }
+
   @action async removeAllCart(cart: any) {
     location.reload();
     this.clearCart(cart);
     localStorage.removeItem("cart");
+    localStorage.removeItem("order");
   }
 
   @action async removeProduct(product: any) {
@@ -111,28 +133,34 @@ export class ProductStore extends VuexModule {
       if (index !== -1) {
         this.cart.splice(index, 1);
         localStorage.setItem("cart", JSON.stringify(this.cart));
+        let cart = JSON.parse(localStorage.cart);
+        if (cart.length == 0) {
+          localStorage.removeItem("order");
+          localStorage.removeItem("cart");
+        }
       }
     }
     this.setCart(this.cart);
     location.reload();
   }
 
-  @action async checkOut() {
-    this.order.push(this.cart);
-    const user = this.userInfo;
-    const userModify = JSON.stringify(user);
-    this.order.push(userModify);
-    const order = this.order;
+  @action async handleCheckout(order: any) {
+    this.setOrder(order);
     try {
-      this.setOrder(order);
-      this.cart = [];
-      this.order = [];
-      this.setCart(this.cart);
-      this.setOrder(this.order);
-      location.reload();
-      alert("Thanks for choosing us");
-    } catch (error: any) {
-      console.error(error.message);
+      localStorage.removeItem("order");
+      localStorage.setItem("order", JSON.stringify(this.order));
+    } catch (error) {
+      alert(error);
     }
+  }
+
+  @action async handleConfirm(order: any) {
+    this.setOrder(order);
+    if (localStorage.getItem("order")) {
+      localStorage.removeItem("order");
+      localStorage.removeItem("cart");
+      localStorage.setItem("order", JSON.stringify(this.order));
+    }
+    window.location.href = "/thankyou";
   }
 }

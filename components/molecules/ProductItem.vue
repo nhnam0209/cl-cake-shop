@@ -61,8 +61,10 @@ import { Component, Prop, Vue } from "nuxt-property-decorator";
 })
 export default class extends Vue {
   count: number = 0;
-  @Prop({ default: {} }) product: any;
   carts = this.$vxm.product.cart;
+  isOpenNote: Boolean = false;
+
+  @Prop({ default: {} }) product: any;
 
   changeValue(value: any, count: any) {
     if (value) {
@@ -81,6 +83,7 @@ export default class extends Vue {
       final_price: product.is_on_discount
         ? product.discounted_price
         : product.original_price,
+      is_open_note: false,
     };
     if (localStorage.getItem("cart")) {
       const cartData = JSON.parse(localStorage.cart);
@@ -118,6 +121,12 @@ export default class extends Vue {
       const cartData = JSON.parse(localStorage.cart);
       this.$vxm.product.setCart(cartData);
       this.carts = cartData;
+      let index = this.carts.findIndex((object: any) => {
+        return object.id === this.product.id;
+      });
+      if (index != -1) {
+        this.count = this.carts[index].quantity;
+      }
     }
   }
 
