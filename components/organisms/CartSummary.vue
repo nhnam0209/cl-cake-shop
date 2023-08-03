@@ -30,7 +30,7 @@
         </div>
         <div
           v-else
-          class="flex flex-wrap w-full lg:w-[600px] border border-solid rounded-lg border-slate-700 p-7"
+          class="flex flex-wrap w-full border border-solid rounded-lg border-slate-700 p-7"
         >
           <div
             class="p-2 inline-flex"
