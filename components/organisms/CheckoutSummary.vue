@@ -47,7 +47,7 @@
           <div class="grid grid-cols-2 my-3">
             <label for="">Email:</label>
             <input
-              type="text"
+              type="email"
               class="border rounded-md"
               required
               v-model="userInfo.email"

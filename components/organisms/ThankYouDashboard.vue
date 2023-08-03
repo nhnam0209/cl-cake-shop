@@ -18,7 +18,7 @@
         </h1>
         <div class="w-full justify-center text-center">
           <a
-            class="nc-Button mt-5 relative h-auto inline-flex items-center justify-center rounded-full transition-colors text-sm sm:text-base font-medium py-3 px-4 sm:py-3.5 sm:px-6 ttnc-ButtonPrimary disabled:bg-opacity-90 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 text-slate-50 dark:text-slate-800 shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-6000 dark:focus:ring-offset-0"
+            class="nc-Button mt-5 relative h-auto inline-flex items-center justify-center rounded-full transition-colors text-sm sm:text-base font-medium py-3 px-4 sm:py-3.5 sm:px-6 ttnc-ButtonPrimary disabled:bg-opacity-90 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 text-slate-50 dark:text-slate-800 shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-6000 dark:focus:ring-offset-0 hover:text-white"
             href="/shop"
             >Go To Shop</a
           >
@@ -70,7 +70,7 @@
                 </div>
                 <div class="grid grid-cols-2 my-3">
                   <label for="">Email:</label>
-                  <p>{{ order[2].mail }}</p>
+                  <p>{{ order[2].email }}</p>
                 </div>
                 <div class="grid grid-cols-2 my-3">
                   <label for="">Address:</label>
