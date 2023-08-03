@@ -11,7 +11,7 @@
         </div>
         <br />
         <div
-          class="flex flex-wrap w-full lg:w-[700px] border border-solid rounded-lg border-slate-700 p-7"
+          class="flex flex-wrap w-full border border-solid rounded-lg border-slate-700 p-7"
         >
           <div
             class="p-2 inline-flex"
@@ -47,7 +47,7 @@
           <div class="grid grid-cols-2 my-3">
             <label for="">Email:</label>
             <input
-              type="email"
+              type="text"
               class="border rounded-md"
               required
               v-model="userInfo.email"
